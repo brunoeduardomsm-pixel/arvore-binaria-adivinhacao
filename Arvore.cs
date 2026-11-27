@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace JogoAdivinhacao
@@ -52,11 +53,8 @@ namespace JogoAdivinhacao
         // Troca a folha errada por uma pergunta nova, com duas folhas
         private void Aprender(No folhaErrada, No pai, bool veioPelaDireita)
         {
-            Console.Write("Desisto! Em que animal voce pensou? ");
-            string certo = Console.ReadLine().Trim();
-
-            Console.Write("Digite uma pergunta que diferencie " + certo + " de " + folhaErrada.Texto + ": ");
-            string pergunta = Console.ReadLine().Trim();
+            string certo = LerTexto("Desisto! Em que animal voce pensou? ");
+            string pergunta = LerTexto("Digite uma pergunta que diferencie " + certo + " de " + folhaErrada.Texto + ": ");
 
             bool simParaNovo = Perguntar("Para " + certo + ", a resposta dessa pergunta e sim?");
 
@@ -85,6 +83,20 @@ namespace JogoAdivinhacao
             Console.WriteLine("Aprendi! Obrigado.");
         }
 
+        // Le um texto do teclado e nao aceita resposta vazia
+        private string LerTexto(string mensagem)
+        {
+            while (true)
+            {
+                Console.Write(mensagem);
+                string t = Console.ReadLine();
+                if (t == null) return "";
+                t = t.Trim();
+                if (t.Length > 0) return t;
+                Console.WriteLine("Nao pode ficar vazio. Tente de novo.");
+            }
+        }
+
         private bool Perguntar(string texto)
         {
             while (true)
@@ -111,6 +123,84 @@ namespace JogoAdivinhacao
             ImprimirNo(no.Direita, nivel + 1);
             Console.WriteLine(new string(' ', nivel * 6) + (no.EhFolha() ? "(" + no.Texto + ")" : no.Texto));
             ImprimirNo(no.Esquerda, nivel + 1);
+        }
+
+        // ---------- Percursos (visitam todos os nos) ----------
+
+        // Pre-ordem: raiz, esquerda, direita
+        public void PreOrdem(No no, List<string> saida)
+        {
+            if (no == null) return;
+            saida.Add(no.Texto);
+            PreOrdem(no.Esquerda, saida);
+            PreOrdem(no.Direita, saida);
+        }
+
+        // Em-ordem: esquerda, raiz, direita
+        public void EmOrdem(No no, List<string> saida)
+        {
+            if (no == null) return;
+            EmOrdem(no.Esquerda, saida);
+            saida.Add(no.Texto);
+            EmOrdem(no.Direita, saida);
+        }
+
+        // Pos-ordem: esquerda, direita, raiz
+        public void PosOrdem(No no, List<string> saida)
+        {
+            if (no == null) return;
+            PosOrdem(no.Esquerda, saida);
+            PosOrdem(no.Direita, saida);
+            saida.Add(no.Texto);
+        }
+
+        public void MostrarPercursos()
+        {
+            List<string> pre = new List<string>();
+            List<string> em = new List<string>();
+            List<string> pos = new List<string>();
+            PreOrdem(Raiz, pre);
+            EmOrdem(Raiz, em);
+            PosOrdem(Raiz, pos);
+            Console.WriteLine("Pre-ordem : " + string.Join(" | ", pre));
+            Console.WriteLine("Em-ordem  : " + string.Join(" | ", em));
+            Console.WriteLine("Pos-ordem : " + string.Join(" | ", pos));
+        }
+
+        // ---------- Estatisticas ----------
+
+        // Altura = quantidade de niveis (uma arvore so com a raiz tem altura 1)
+        public int Altura(No no)
+        {
+            if (no == null) return 0;
+            int esq = Altura(no.Esquerda);
+            int dir = Altura(no.Direita);
+            return 1 + (esq > dir ? esq : dir);
+        }
+
+        public int ContarNos(No no)
+        {
+            if (no == null) return 0;
+            return 1 + ContarNos(no.Esquerda) + ContarNos(no.Direita);
+        }
+
+        public int ContarFolhas(No no)
+        {
+            if (no == null) return 0;
+            if (no.EhFolha()) return 1;
+            return ContarFolhas(no.Esquerda) + ContarFolhas(no.Direita);
+        }
+
+        public void MostrarEstatisticas()
+        {
+            int altura = Altura(Raiz);
+            int folhas = ContarFolhas(Raiz);
+            int nos = ContarNos(Raiz);
+            Console.WriteLine("Total de nos       : " + nos);
+            Console.WriteLine("Perguntas (internos): " + (nos - folhas));
+            Console.WriteLine("Palpites (folhas)  : " + folhas);
+            Console.WriteLine("Altura da arvore   : " + altura);
+            Console.WriteLine("Maximo de perguntas numa partida: " + (altura - 1));
         }
 
         // Salva a arvore no arquivo (percurso pre-ordem). "#" marca um filho vazio.

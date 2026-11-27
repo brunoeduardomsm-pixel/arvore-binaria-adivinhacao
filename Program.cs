@@ -12,26 +12,44 @@ namespace JogoAdivinhacao
             arvore.Carregar(Arquivo);
 
             Console.WriteLine("=== Jogo da Adivinhacao (Arvore Binaria) ===");
-            Console.WriteLine("Pense em um animal e responda com s ou n.");
 
             bool continuar = true;
             while (continuar)
             {
                 Console.WriteLine();
-                arvore.Jogar();
-                arvore.Salvar(Arquivo);
+                Console.WriteLine("1 - Jogar");
+                Console.WriteLine("2 - Ver a arvore");
+                Console.WriteLine("3 - Percursos (pre, em e pos-ordem)");
+                Console.WriteLine("4 - Estatisticas (altura, nos, folhas)");
+                Console.WriteLine("0 - Sair");
+                Console.Write("Escolha: ");
+                string op = Console.ReadLine();
+                if (op == null) break;
+                Console.WriteLine();
 
-                Console.Write("Ver a arvore agora? (s/n): ");
-                string ver = Console.ReadLine();
-                if (ver != null && ver.Trim().ToLower() == "s")
+                switch (op.Trim())
                 {
-                    Console.WriteLine();
-                    arvore.Imprimir();
+                    case "1":
+                        Console.WriteLine("Pense em um animal e responda com s ou n.");
+                        arvore.Jogar();
+                        arvore.Salvar(Arquivo);
+                        break;
+                    case "2":
+                        arvore.Imprimir();
+                        break;
+                    case "3":
+                        arvore.MostrarPercursos();
+                        break;
+                    case "4":
+                        arvore.MostrarEstatisticas();
+                        break;
+                    case "0":
+                        continuar = false;
+                        break;
+                    default:
+                        Console.WriteLine("Opcao invalida.");
+                        break;
                 }
-
-                Console.Write("Jogar de novo? (s/n): ");
-                string de_novo = Console.ReadLine();
-                continuar = de_novo != null && de_novo.Trim().ToLower() == "s";
             }
 
             Console.WriteLine("Ate mais!");
