@@ -11,12 +11,19 @@ Se ele errar, ele pergunta qual era o animal e aprende uma pergunta nova para a 
 - **Aresta da esquerda:** resposta "não"
 - **Aresta da direita:** resposta "sim"
 
+## O que o programa faz
+- **Jogar:** o computador faz perguntas, chuta e aprende quando erra
+- **Ver a árvore:** mostra a árvore deitada no terminal
+- **Percursos:** pré-ordem, em-ordem e pós-ordem
+- **Estatísticas:** total de nós, perguntas, folhas e altura da árvore
+- Salva o que aprendeu em arquivo e carrega na próxima vez
+
 ## Arquivos
 | Arquivo | O que tem |
 |---|---|
 | `No.cs` | classe do nó (texto, filho esquerdo, filho direito) |
-| `Arvore.cs` | a árvore: jogar, aprender, imprimir, salvar e carregar |
-| `Program.cs` | menu do jogo (console) |
+| `Arvore.cs` | a árvore: jogar, aprender, percursos, altura, contagens, salvar e carregar |
+| `Program.cs` | menu do programa (console) |
 | `arvore.txt` | criado sozinho quando o jogo roda, guarda o que o jogo aprendeu |
 
 ## Como rodar
